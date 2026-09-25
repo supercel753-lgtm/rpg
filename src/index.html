@@ -3,6 +3,7 @@
 <html lang="pt-BR">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -10,96 +11,959 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Zelda Pixel Adventure</title>
+    <meta
+        name="theme-color"
+        content="#101810"
+    >
+
+    <title>Zelda Pixel Adventure — Beta 3</title>
+
+    <!-- ========================================= -->
+    <!-- CONFIGURAÇÃO DOS MÓDULOS JAVASCRIPT       -->
+    <!-- ========================================= -->
+
+    <script type="importmap">
+    {
+        "imports": {
+
+            "./java.js/renderer.js":
+                "./java.js/RENDERER.JS",
+
+            "./java.js/tiles.js":
+                "./java.js/TILES.JS",
+
+            "./java.js/particles.js":
+                "./java.js/PARTICLES.JS",
+
+            "./java.js/lighting.js":
+                "./java.js/LIGHTING.JS",
+
+            "./java.js/ui.js":
+                "./java.js/UI.JS",
+
+            "./java.js/attributes.js":
+                "./java.js/ATTRIBUTES.JS",
+
+            "./java.js/classes.js":
+                "./java.js/CLASSES.JS",
+
+            "./java.js/items.js":
+                "./java.js/ITEMS.JS",
+
+            "./java.js/inventory.js":
+                "./java.js/INVENTORY.JS",
+
+            "./java.js/equipment.js":
+                "./java.js/EQUIPMENT.JS",
+
+            "./java.js/skills.js":
+                "./java.js/SKILLS.JS",
+
+            "./java.js/progression.js":
+                "./java.js/PROGRESSION.JS",
+
+            "./java.js/crafting.js":
+                "./java.js/CRAFTING.JS"
+
+        }
+    }
+    </script>
+
+
+    <!-- ========================================= -->
+    <!-- ESTILOS DO JOGO                          -->
+    <!-- ========================================= -->
 
     <style>
+
         * {
+
             box-sizing: border-box;
+
         }
 
-        html,
-        body {
-            margin: 0;
-            padding: 0;
+        :root {
+
+            --background: #101810;
+
+            --panel: #1c2b20;
+
+            --border: #bda467;
+
+            --gold: #e8cb81;
+
+            --text: #e6eddc;
+
+            --secondary: #a6b49d;
+
+        }
+
+        html {
+
             width: 100%;
-            min-height: 100%;
-            background: #101810;
-            color: #ffffff;
-            font-family: monospace;
+
+            height: 100%;
+
+            background: var(--background);
+
         }
 
         body {
+
+            margin: 0;
+
+            padding: 16px;
+
             min-height: 100vh;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
             justify-content: center;
-            gap: 16px;
-            overflow-x: hidden;
+
+            gap: 15px;
+
+            background:
+
+                radial-gradient(
+
+                    ellipse at center,
+
+                    #263b29 0%,
+
+                    #142319 45%,
+
+                    #090f0c 100%
+
+                );
+
+            color: var(--text);
+
+            font-family:
+
+                Consolas,
+
+                "Courier New",
+
+                monospace;
+
         }
 
-        h1 {
-            color: #f5df8c;
-            font-size: 24px;
-            text-align: center;
+        /* ===================================== */
+        /* TÍTULO                               */
+        /* ===================================== */
+
+        .game-title {
+
             margin: 0;
+
+            text-align: center;
+
+            color: var(--gold);
+
+            font-size: clamp(
+
+                18px,
+
+                3vw,
+
+                30px
+
+            );
+
+            letter-spacing: 2px;
+
+            text-shadow:
+
+                2px 2px #47391e,
+
+                0 0 15px rgba(
+                    232,
+                    203,
+                    129,
+                    0.2
+                );
+
         }
+
+        .game-subtitle {
+
+            margin: 0;
+
+            color: var(--secondary);
+
+            font-size: 12px;
+
+            letter-spacing: 3px;
+
+            text-align: center;
+
+        }
+
+        /* ===================================== */
+        /* CONTÊINER DO JOGO                    */
+        /* ===================================== */
+
+        .game-container {
+
+            position: relative;
+
+            width: min(
+
+                96vw,
+
+                1280px
+
+            );
+
+            aspect-ratio: 16 / 9;
+
+            background: #000;
+
+            border: 4px solid var(--border);
+
+            box-shadow:
+
+                0 0 0 3px #30291b,
+
+                0 15px 45px rgba(
+                    0,
+                    0,
+                    0,
+                    0.65
+                );
+
+            overflow: hidden;
+
+        }
+
+        /* ===================================== */
+        /* CANVAS                               */
+        /* ===================================== */
 
         #game {
+
             display: block;
-            width: min(96vw, 1280px);
-            height: auto;
-            aspect-ratio: 16 / 9;
-            background: #000000;
-            border: 4px solid #c9a45b;
+
+            width: 100%;
+
+            height: 100%;
+
+            background: #000;
+
             image-rendering: pixelated;
-            image-rendering: crisp-edges;
+
             outline: none;
+
+            touch-action: none;
+
         }
 
-        .controls {
+        /* ===================================== */
+        /* TELA DE CARREGAMENTO                 */
+        /* ===================================== */
+
+        #loading {
+
+            position: absolute;
+
+            inset: 0;
+
+            z-index: 10;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 16px;
+
+            padding: 20px;
+
+            background: #101810;
+
+            color: var(--gold);
+
             text-align: center;
-            line-height: 1.8;
-            color: #dce5c8;
-            font-size: 13px;
-            padding: 0 12px;
+
+        }
+
+        #loading h2 {
+
+            margin: 0;
+
+            font-size: clamp(
+
+                12px,
+
+                2vw,
+
+                20px
+
+            );
+
+            letter-spacing: 2px;
+
+        }
+
+        #loading p {
+
+            margin: 0;
+
+            color: var(--secondary);
+
+            font-size: 11px;
+
+            line-height: 1.6;
+
+        }
+
+        .loading-bar {
+
+            width: min(
+
+                240px,
+
+                75%
+
+            );
+
+            height: 10px;
+
+            border: 1px solid var(--border);
+
+            padding: 2px;
+
+        }
+
+        .loading-progress {
+
+            width: 0%;
+
+            height: 100%;
+
+            background: var(--gold);
+
+            animation: loading 2s ease-in-out infinite;
+
+        }
+
+        @keyframes loading {
+
+            0% {
+
+                width: 0%;
+
+            }
+
+            60% {
+
+                width: 75%;
+
+            }
+
+            100% {
+
+                width: 100%;
+
+            }
+
+        }
+
+        /* ===================================== */
+        /* ERROS                                */
+        /* ===================================== */
+
+        #error-panel {
+
+            display: none;
+
+            position: absolute;
+
+            inset: 0;
+
+            z-index: 20;
+
+            padding: 20px;
+
+            background: rgba(
+                20,
+                10,
+                10,
+                0.97
+            );
+
+            color: #ffaaaa;
+
+            overflow: auto;
+
+        }
+
+        #error-panel h2 {
+
+            color: #ff7777;
+
+            font-size: 16px;
+
+        }
+
+        #error-message {
+
+            white-space: pre-wrap;
+
+            overflow-wrap: anywhere;
+
+            font-size: 12px;
+
+            line-height: 1.6;
+
+        }
+
+        /* ===================================== */
+        /* CONTROLES                            */
+        /* ===================================== */
+
+        .controls {
+
+            width: min(
+
+                96vw,
+
+                900px
+
+            );
+
+            padding: 12px;
+
+            background: rgba(
+                20,
+                30,
+                22,
+                0.85
+            );
+
+            border: 1px solid #52684c;
+
+            text-align: center;
+
+            font-size: 12px;
+
+            line-height: 2;
+
         }
 
         .controls strong {
-            color: #f5df8c;
+
+            color: var(--gold);
+
         }
+
+        .controls-title {
+
+            color: var(--gold);
+
+            font-size: 14px;
+
+            margin-bottom: 5px;
+
+        }
+
+        /* ===================================== */
+        /* BOTÕES                               */
+        /* ===================================== */
+
+        .game-button {
+
+            padding: 9px 18px;
+
+            background: var(--panel);
+
+            color: var(--gold);
+
+            border: 1px solid var(--border);
+
+            font-family: inherit;
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+        .game-button:hover {
+
+            background: #354b32;
+
+        }
+
+        .game-button:disabled {
+
+            opacity: 0.5;
+
+            cursor: not-allowed;
+
+        }
+
+        /* ===================================== */
+        /* RESPONSIVIDADE                       */
+        /* ===================================== */
+
+        @media (
+            max-width: 600px
+        ) {
+
+            body {
+
+                padding: 8px;
+
+                gap: 10px;
+
+            }
+
+            .game-container {
+
+                width: 100%;
+
+                border-width: 2px;
+
+            }
+
+            .controls {
+
+                width: 100%;
+
+                font-size: 10px;
+
+                padding: 8px;
+
+            }
+
+        }
+
     </style>
 
 </head>
 
+
 <body>
 
-    <h1>ZELDA PIXEL ADVENTURE</h1>
+    <!-- ========================================= -->
+    <!-- TÍTULO DO JOGO                           -->
+    <!-- ========================================= -->
 
-    <canvas
-        id="game"
-        width="320"
-        height="180"
-        tabindex="0"
-    ></canvas>
+    <h1 class="game-title">
 
-    <div class="controls">
-        <strong>WASD / SETAS</strong> — MOVIMENTAR
+        ZELDA PIXEL ADVENTURE
+
+    </h1>
+
+    <p class="game-subtitle">
+
+        FANTASY RPG — BETA 3
+
+    </p>
+
+
+    <!-- ========================================= -->
+    <!-- ÁREA PRINCIPAL                           -->
+    <!-- ========================================= -->
+
+    <main class="game-container">
+
+        <canvas
+
+            id="game"
+
+            width="320"
+
+            height="180"
+
+            tabindex="0"
+
+            aria-label="Área principal do jogo"
+
+        ></canvas>
+
+
+        <!-- ===================================== -->
+        <!-- CARREGAMENTO                         -->
+        <!-- ===================================== -->
+
+        <div id="loading">
+
+            <h2>
+
+                CARREGANDO O MUNDO...
+
+            </h2>
+
+            <p id="loading-text">
+
+                Inicializando os sistemas do jogo.
+
+            </p>
+
+            <div class="loading-bar">
+
+                <div class="loading-progress"></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ===================================== -->
+        <!-- ERROS                               -->
+        <!-- ===================================== -->
+
+        <div id="error-panel">
+
+            <h2>
+
+                ERRO AO INICIAR O JOGO
+
+            </h2>
+
+            <pre id="error-message"></pre>
+
+            <button
+
+                id="reload-button"
+
+                class="game-button"
+
+                type="button"
+
+            >
+
+                RECARREGAR
+
+            </button>
+
+        </div>
+
+    </main>
+
+
+    <!-- ========================================= -->
+    <!-- INFORMAÇÕES DE CONTROLE                  -->
+    <!-- ========================================= -->
+
+    <section class="controls">
+
+        <div class="controls-title">
+
+            CONTROLES
+
+        </div>
+
+        <strong>WASD / SETAS</strong>
+
+        — MOVIMENTAÇÃO
+
         <br>
-        <strong>J</strong> — ATACAR |
-        <strong>K</strong> — ESCUDO |
-        <strong>Q</strong> — INVENTÁRIO
-    </div>
 
-    <script src="./js/world.js"></script>
+        <strong>SHIFT</strong>
 
-    <script src="./js/player.js"></script>
+        — CORRER
 
-    <script src="./js/combat.js"></script>
+        |
 
-    <script src="./js/inventory.js"></script>
+        <strong>J</strong>
 
-    <script src="./js/game.js"></script>
+        — ATACAR
+
+        |
+
+        <strong>L</strong>
+
+        — DEFENDER
+
+        <br>
+
+        <strong>F</strong>
+
+        — INTERAGIR
+
+        |
+
+        <strong>TAB</strong>
+
+        — MENU RPG
+
+        |
+
+        <strong>M</strong>
+
+        — MAPA
+
+        <br>
+
+        <strong>P</strong>
+
+        — SALVAR
+
+        |
+
+        <strong>ENTER</strong>
+
+        — SELECIONAR / INICIAR
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- CONTROLES DA PÁGINA                     -->
+    <!-- ========================================= -->
+
+    <button
+
+        id="fullscreen-button"
+
+        class="game-button"
+
+        type="button"
+
+    >
+
+        TELA CHEIA
+
+    </button>
+
+
+    <!-- ========================================= -->
+    <!-- INICIALIZAÇÃO DA ENGINE                  -->
+    <!-- ========================================= -->
+
+    <script type="module">
+
+        import {
+
+            Game
+
+        } from "./java.js/game.js";
+
+
+        // =========================================
+        // ELEMENTOS DA PÁGINA
+        // =========================================
+
+        const canvas =
+            document.getElementById("game");
+
+        const loading =
+            document.getElementById("loading");
+
+        const loadingText =
+            document.getElementById("loading-text");
+
+        const errorPanel =
+            document.getElementById("error-panel");
+
+        const errorMessage =
+            document.getElementById("error-message");
+
+        const reloadButton =
+            document.getElementById("reload-button");
+
+        const fullscreenButton =
+            document.getElementById("fullscreen-button");
+
+
+        // =========================================
+        // EXIBIR ERROS
+        // =========================================
+
+        function showError(error) {
+
+            console.error(
+
+                "Erro na engine:",
+
+                error
+
+            );
+
+            loading.style.display = "none";
+
+            errorPanel.style.display = "block";
+
+            errorMessage.textContent =
+
+                error?.stack ||
+
+                error?.message ||
+
+                String(error);
+
+        }
+
+
+        // =========================================
+        // INICIALIZAR JOGO
+        // =========================================
+
+        function initializeGame() {
+
+            loadingText.textContent =
+
+                "Preparando Canvas e engine...";
+
+            const game =
+                new Game(canvas);
+
+            game.start();
+
+            // Disponibilizar para depuração
+            // pelo console do navegador.
+
+            window.zeldaGame = game;
+
+            loading.style.display = "none";
+
+            canvas.focus();
+
+            console.log(
+
+                "Zelda Pixel Adventure — Engine iniciada."
+
+            );
+
+            console.log(
+
+                "Pressione ENTER para escolher sua classe."
+
+            );
+
+            return game;
+
+        }
+
+
+        // =========================================
+        // TELA CHEIA
+        // =========================================
+
+        fullscreenButton.addEventListener(
+
+            "click",
+
+            async () => {
+
+                try {
+
+                    const container =
+                        document.querySelector(
+                            ".game-container"
+                        );
+
+                    if (!document.fullscreenElement) {
+
+                        await container.requestFullscreen();
+
+                    } else {
+
+                        await document.exitFullscreen();
+
+                    }
+
+                    canvas.focus();
+
+                } catch (error) {
+
+                    console.error(
+
+                        "Erro ao ativar tela cheia:",
+
+                        error
+
+                    );
+
+                }
+
+            }
+
+        );
+
+
+        // =========================================
+        // RECARREGAR
+        // =========================================
+
+        reloadButton.addEventListener(
+
+            "click",
+
+            () => {
+
+                window.location.reload();
+
+            }
+
+        );
+
+
+        // =========================================
+        // ERROS DURANTE A EXECUÇÃO
+        // =========================================
+
+        window.addEventListener(
+
+            "error",
+
+            event => {
+
+                if (event.error) {
+
+                    showError(
+                        event.error
+                    );
+
+                }
+
+            }
+
+        );
+
+
+        window.addEventListener(
+
+            "unhandledrejection",
+
+            event => {
+
+                showError(
+                    event.reason
+                );
+
+            }
+
+        );
+
+
+        // =========================================
+        // EXECUTAR
+        // =========================================
+
+        try {
+
+            initializeGame();
+
+        } catch (error) {
+
+            showError(error);
+
+        }
+
+    </script>
 
 </body>
 
