@@ -6127,3 +6127,13 @@ class EntityManager {
 
 }
 
+export {
+    Entity,
+    NPC,
+    Shopkeeper,
+    Enemy,
+    Boss,
+    Animal,
+    EntityManager
+};
+
