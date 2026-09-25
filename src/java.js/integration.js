@@ -38,6 +38,11 @@ RESPONSABILIDADES:
 // IMPORTAÇÕES GRÁFICAS
 // =====================================================
 
+
+import {
+    loadGameArt
+} from "./assets.js";
+
 import {
     PixelRenderer
 } from "./renderer.js";
