@@ -1917,6 +1917,39 @@ function createWorldLights(game) {
 
 function createGraphicsSystems(game) {
 
+    
+// =====================================================
+// CARREGAR GRÁFICOS EXTERNOS
+// =====================================================
+
+loadGameArt(
+
+    game.spriteSystem,
+
+    game.tileSystem
+
+).then(result => {
+
+    console.log(
+
+        "Pacote gráfico inicializado:",
+
+        result
+
+    );
+
+}).catch(error => {
+
+    console.error(
+
+        "Falha ao inicializar gráficos:",
+
+        error
+
+    );
+
+});
+
     // -----------------------------------------
     // RENDERIZADOR
     // -----------------------------------------
